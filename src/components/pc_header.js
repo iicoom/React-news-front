@@ -22,19 +22,21 @@ import {
     BrowserRouter as Router,
     Route,
     Link
-} from 'react-router-dom'
+} from 'react-router-dom';
+import axios from 'axios';
 
 class PCHeader extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             current: 'top',
             modalVisible: false,
-            action: 'login',
             hasLogined: false,
             userNickName: '',
-            userid: 0
+            userid: 0,
+            action: 'login',
         };
+        this.handleSubmit = this.handleSubmit.bind(this);
     };
 
     componentWillMount(){
@@ -62,27 +64,28 @@ class PCHeader extends React.Component {
     {
         //页面开始向 API 进行提交数据
         e.preventDefault();
-        var myFetchOptions = {
-            method: 'GET'
-        };
         var formData = this.props.form.getFieldsValue();
-        console.log(formData);
-        fetch("http://newsapi.gugujiankong.com/Handler.ashx?action=" + this.state.action
-            + "&username="+formData.userName+"&password="+formData.password
-            +"&r_userName=" + formData.r_userName + "&r_password="
-            + formData.r_password + "&r_confirmPassword="
-            + formData.r_confirmPassword, myFetchOptions)
-            .then(response => response.json())
-            .then(json => {
-                this.setState({userNickName: json.NickUserName, userid: json.UserId});
-                localStorage.userid= json.UserId;
-                localStorage.userNickName = json.NickUserName;
-            });
+  
+        axios.post('http://localhost:3000/api/session/signin', {
+            mobile: formData.userName,
+            password: formData.password
+          })
+          .then( res => {
+            console.log(res.data);
+            this.setState({userNickName: res.data.expire, userid: res.data.token});
+            localStorage.userid= res.data.token;
+            localStorage.userNickName = res.data.expire;
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
         if (this.state.action=="login") {
             this.setState({hasLogined:true});
         }
         message.success("请求成功！");
         this.setModalVisible(false);
+
     };
     callback(key) {
         if (key == 1) {
@@ -153,7 +156,7 @@ class PCHeader extends React.Component {
                         <Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)} okText="关闭">
                             <Tabs type="card" onChange={this.callback.bind(this)}>
                                 <TabPane tab="登录" key="1">
-                                    <Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
+                                    <Form layout="horizontal" onSubmit={this.handleSubmit}>
                                         <FormItem label="账户">
                                             <Input placeholder="请输入您的账号" {...getFieldProps('userName')}/>
                                         </FormItem>

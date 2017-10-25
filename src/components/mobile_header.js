@@ -31,7 +31,6 @@ class MobileHeader extends React.Component{
         this.state ={
             current: 'top',
             modalVisible: false,
-            action: 'login',
             hasLogined: false,
             userNickName: '',
             userid: 0
@@ -56,18 +55,16 @@ class MobileHeader extends React.Component{
         //页面开始向 API 进行提交数据
         e.preventDefault();
         let myFetchOptions = {
-            method: 'GET'
+            method: 'POST'
         }
         let formData = this.props.form.getFieldsValue();
-        console.log(formData);
-        fetch("http://newsapi.gugujiankong.com/Handler.ashx?action=" + this.state.action
-            + "&username="+formData.userName+"&password="+formData.password
-            +"&r_userName=" + formData.r_userName + "&r_password="
-            + formData.r_password + "&r_confirmPassword="
-            + formData.r_confirmPassword, myFetchOptions)
+        console.log('ooooooooooxxxxx'+formData);
+        fetch("localhost:3000/api/session/signin" + 
+            + "&mobile="+formData.userName+"&password="+formData.password, myFetchOptions)
             .then(response => response.json())
             .then(json => {
-                this.setState({userNickName: json.NickUserName, userid: json.UserId});
+                console.log('ooooooooooxxxxx'+json)
+                this.setState({userNickName: json.token, userid: json.UserId});
             });
         if (this.state.action=="login") {
             this.setState({hasLogined:true});

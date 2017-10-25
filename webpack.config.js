@@ -3,8 +3,8 @@ var path = require('path');
 var BabelPluginImport = require('babel-plugin-import');
 
 module.exports = {
-    context: __dirname + '/src',
-    entry: "./js/root.js",
+    entry: "./src/js/root.js",
+    devtool: 'inline-source-map',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: "bundle.js"
@@ -36,7 +36,7 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname + '/src'),
         historyApiFallback: true,
-        port: 3000
-    }
+        port: 3001,
+    },
 
 };
