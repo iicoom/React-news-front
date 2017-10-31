@@ -96,6 +96,11 @@ class PCHeader extends React.Component {
         }
     };
     logout(){
+        console.log('nimaieeeee')
+        axios.delete('http://localhost:3000/api/session/logout',{})
+        .then( res => {
+            console.log(res)
+        })
         localStorage.userid= '';
         localStorage.userNickName = '';
         this.setState({hasLogined:false});
